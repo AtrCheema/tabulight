@@ -52,14 +52,13 @@ setup(
 
     install_requires=[
         'numpy<=2.0.1, >=1.17',
-        'scipy<=1.13, >=1.4',
         'easy_mpl',
         'pandas<=2.1.4, >=1.0.0',
-        'matplotlib<=3.9.0, >=3.0.0',
+        'matplotlib<=3.9.0, >=3.4.0',
     ],
     extras_require={
         'all': ["numpy<=2.0.1, >=1.17",
-                "scipy<=1.13, >=1.4",
+                "scipy<=1.14, >=1.4",
                 "easy_mpl",
                 'pandas<=2.1.4, >=1.0.0',
                 'matplotlib<=3.9.0, >=3.0.0',
