@@ -23,6 +23,12 @@ Welcome to tabulight's documentation!
 
    .. automethod:: __init__
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Scripts
+
+   auto_examples/index
+
 
 Indices and tables
 ==================
