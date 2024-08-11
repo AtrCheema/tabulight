@@ -23,6 +23,9 @@ Welcome to tabulight's documentation!
 
    .. automethod:: __init__
 
+
+Examples
+=========
 .. toctree::
    :maxdepth: 2
    :caption: Scripts

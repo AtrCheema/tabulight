@@ -13,30 +13,10 @@ import numpy as np
 
 from tabulight import EDA
 from tabulight.utils import pac_yw, auto_corr, ccovf_np, ccf_np
+from tabulight import wq_data
 
 
-def busan_beach(inputs=None):
-    fpath = os.path.join(os.path.dirname(os.path.dirname(__file__)), "arg_busan.csv")
-
-    if os.path.exists(fpath):
-        df = pd.read_csv(fpath, index_col="index")
-    else:
-        df = pd.read_csv(
-            "https://raw.githubusercontent.com/AtrCheema/AI4Water/ec2a4a426673b11e3589b64cef9d7160b1de28d4/ai4water/datasets/arg_busan.csv",
-                         index_col="index")
-        df.to_csv(fpath, index=True, index_label="index")
-    df.index = pd.to_datetime(df.index)
-
-    default_inputs = ['tide_cm', 'wat_temp_c', 'sal_psu', 'air_temp_c', 'pcp_mm', 'pcp3_mm', 'pcp6_mm',
-                      'pcp12_mm', 'wind_dir_deg', 'wind_speed_mps', 'air_p_hpa', 'mslp_hpa', 'rel_hum'
-                      ]
-
-    if inputs is None:
-        inputs = default_inputs
-
-    return df[inputs + ['tetx_coppml']]
-
-beach_data = busan_beach()
+beach_data = wq_data()
 
 pcp = beach_data['pcp_mm']
 
