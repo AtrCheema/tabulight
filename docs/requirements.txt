@@ -12,3 +12,4 @@ sphinx_copybutton
 sphinx_toggleprompt
 sphinx_rtd_theme==2.0.0
 sphinx_issues
+sphinx-gallery

@@ -44,6 +44,8 @@ extensions = [
 'sphinx_toggleprompt',
 'sphinx_copybutton',
 "sphinx-prompt",
+"sphinx_gallery.gen_gallery",
+'sphinx_gallery.load_style',
 ]
 
 toggleprompt_offset_right  = 30
