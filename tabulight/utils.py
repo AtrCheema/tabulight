@@ -659,6 +659,8 @@ def wq_data(inputs=None, target=None):
                       'pcp12_mm', 'wind_dir_deg', 'wind_speed_mps', 'air_p_hpa', 'mslp_hpa', 'rel_hum'
                       ]
 
+    default_targets = [col for col in df.columns if col not in default_inputs]
+
     if inputs is None:
         inputs = default_inputs
 

@@ -12,6 +12,7 @@ using GitHub link for the latest code
 from tabulight import EDA
 from tabulight import wq_data
 data = wq_data()
+print(data.shape)
 eda = EDA(data)
 _ = eda.heatmap()
 _ = eda.plot_missing()

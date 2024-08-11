@@ -8,6 +8,8 @@ Quick Start
     >>> from tabulight import wq_data
 
     >>> data = wq_data()
+    >>> data.shape
+    
     >>> eda = EDA(data)
 
     >>> _ = eda.heatmap()
