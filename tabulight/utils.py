@@ -643,7 +643,7 @@ def print_info(
     return
 
 
-def wq_data(inputs=None, target=None):
+def wq_data(inputs=None, target: Union[list, str] = 'tetx_coppml'):
     fpath = os.path.join(os.path.dirname(os.path.dirname(__file__)), "arg_busan.csv")
 
     if os.path.exists(fpath):

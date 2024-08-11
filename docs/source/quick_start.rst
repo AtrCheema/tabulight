@@ -9,7 +9,7 @@ Quick Start
 
     >>> data = wq_data()
     >>> data.shape
-    
+    (1446, 14)
     >>> eda = EDA(data)
 
     >>> _ = eda.heatmap()
