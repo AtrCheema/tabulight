@@ -4,17 +4,6 @@ beach water quality
 ===========================
 """
 
-import os
-import site
-
-if __name__ == '__main__':
-    wd_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('__file__')))))
-    wd_dir = os.path.dirname(os.path.dirname(os.path.realpath('__file__')))
-    print(wd_dir)
-    site.addsitedir(wd_dir)
-
-import pandas as pd
-
 from tabulight import EDA
 from tabulight import wq_data
 from tabulight.utils import print_info

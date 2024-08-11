@@ -64,8 +64,8 @@ class EDA(Plot):
     - show_unique_vals
 
     Example:
-        >>> from ai4water.datasets import busan_beach
-        >>> eda = EDA(data=busan_beach())
+        >>> from tabulight import wq_data
+        >>> eda = EDA(data=wq_data())
         >>> eda()  # to plot all available plots with single line
     """
 
@@ -215,8 +215,8 @@ class EDA(Plot):
 
         Example
         -------
-            >>> from ai4water.datasets import busan_beach
-            >>> data = busan_beach()
+            >>> from tabulight import wq_data
+            >>> data = wq_data()
             >>> vis = EDA(data)
             >>> vis.heatmap()
         """
@@ -331,8 +331,8 @@ class EDA(Plot):
 
         Example
         -------
-            >>> from ai4water.datasets import busan_beach
-            >>> data = busan_beach()
+            >>> from tabulight import wq_data
+            >>> data = wq_data()
             >>> vis = EDA(data)
             >>> vis.plot_missing()
         """
@@ -459,8 +459,8 @@ class EDA(Plot):
 
         Example
         -------
-            >>> from ai4water.datasets import busan_beach
-            >>> eda = EDA(busan_beach())
+            >>> from tabulight import wq_data
+            >>> eda = EDA(wq_data())
             >>> eda.plot_data(subplots=True, figsize=(12, 14), sharex=True)
             >>> eda.plot_data(freq='monthly', subplots=True, figsize=(12, 14), sharex=True)
 
@@ -487,7 +487,7 @@ class EDA(Plot):
                  tick_kws=None,
                  ignore_datetime_index=False,
                  **kwargs):
-        """Plots each columns of dataframe and saves it if `save` is True.
+        """Plots each columns of dataframe.
 
          max_subplots: determines how many sub_plots are to be plotted within
             one plot. If dataframe contains columns
@@ -690,9 +690,9 @@ class EDA(Plot):
 
         Example
         -------
-            >>> from ai4water.eda import EDA
-            >>> from ai4water.datasets import busan_beach
-            >>> eda = EDA(data=busan_beach())
+            >>> from tabulight import EDA
+            >>> from tabulight import wq_data
+            >>> eda = EDA(data=wq_data())
             >>> eda.normality_test()
 
         .. _Shapiro-wilke:
@@ -778,9 +778,9 @@ class EDA(Plot):
 
         Example
         -------
-            >>> from ai4water.eda import EDA
-            >>> from ai4water.datasets import busan_beach
-            >>> vis = EDA(busan_beach())
+            >>> from tabulight.eda import EDA
+            >>> from tabulight import wq_data
+            >>> vis = EDA(wq_data())
             >>> vis.correlation()
         """
         # todo, by default it is using corr_coeff, added other possible correlation methods such as
