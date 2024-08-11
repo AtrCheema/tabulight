@@ -1,0 +1,8 @@
+
+easy_mpl
+pandas
+numpy
+
+seaborn
+statsmodels
+scipy
