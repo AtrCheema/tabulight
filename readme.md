@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/tabulight/badge/?version=latest)](https://tabulight.readthedocs.io/en/latest/?badge=latest)
+
 Exploratory data analysis for tabular and 1-D time series data.
 
 # Installation

@@ -12,6 +12,8 @@ Welcome to tabulight's documentation!
    installation
    quick_start
 
+API Reference
+=============
 .. toctree::
    :maxdepth: 2
    :caption: API:
