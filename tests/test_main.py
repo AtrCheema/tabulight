@@ -1,13 +1,13 @@
+
 import os
-import sys
 import site
 import unittest
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
-ai4_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-site.addsitedir(ai4_dir)
+tabulight_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+site.addsitedir(tabulight_dir)
 
 import numpy as np
 
@@ -34,12 +34,14 @@ def call_methods(eda_obj:EDA):
     plt.close('all')
     eda_obj.probability_plots()
     plt.close('all')
-    eda_obj.heatmap()
+    #eda_obj.heatmap()
+    eda_obj.data_availability()
     eda_obj.grouped_scatter()
 
     if isinstance(eda_obj.data, pd.DataFrame) and eda_obj.data.shape[1]>1:
         for method in ['pearson', 'spearman', 'covariance', 'kendall']:
             eda_obj.correlation(method=method)
+            plt.close('all')
 
     eda_obj.autocorrelation(n_lags=3)
     eda_obj.partial_autocorrelation(n_lags=3)
@@ -80,7 +82,7 @@ class TestEDA(unittest.TestCase):
         return
 
     def test_with_output_features(self):
-        data = busan_beach(inputs=['tide_cm', 'wat_temp_c'])
+        data = wq_data(inputs=['tide_cm', 'wat_temp_c'])
         eda = EDA(
             data=data, out_cols=data.columns.to_list()[-1:],
             dpi=50,
@@ -90,7 +92,7 @@ class TestEDA(unittest.TestCase):
         return
 
     def test_with_input_output_features(self):
-        data = busan_beach(inputs=['tide_cm', 'wat_temp_c'])
+        data = wq_data(inputs=['tide_cm', 'wat_temp_c'])
         eda = EDA(
             data=data,
             in_cols=data.columns.to_list()[0:-1],
@@ -133,7 +135,9 @@ class TestEDA(unittest.TestCase):
         return
 
     def test_ndarray(self):
-        eda = EDA(np.random.random((100, 3)), save=self.save, show=self.show)
+        # create a random state and generate random array from it
+        rng = np.random.RandomState(0)
+        eda = EDA(rng.randn(100, 3), save=self.save, show=self.show)
         call_methods(eda)
         assert isinstance(eda.data, pd.DataFrame)
         return

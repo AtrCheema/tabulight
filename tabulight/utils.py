@@ -8,8 +8,6 @@ from types import FunctionType
 from collections import abc as collections_abc
 from typing import Any, Dict, Union
 
-from scipy import linalg
-
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -18,6 +16,7 @@ import matplotlib.pyplot as plt
 from ._backend import scipy, seaborn, statsmodels
 
 if scipy is not None:
+    from scipy import linalg
     from scipy.stats import skew, kurtosis, gmean, variation, hmean
 
 

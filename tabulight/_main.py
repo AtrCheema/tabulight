@@ -6,23 +6,25 @@ from typing import Union, List, Dict
 
 import numpy as np
 import pandas as pd
+
+import matplotlib
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 import scipy.stats as stats
 
-from .utils import _missing_vals
+from easy_mpl import imshow
 from easy_mpl import bar_chart, parallel_coordinates, pie
 from easy_mpl.utils import create_subplots
 
-from ._backend import scipy
 from ._backend import seaborn as sns
 
+from .utils import Plot
+from .utils import _missing_vals
 from .utils import min_max_normalize
 from .utils import find_tot_plots, get_nrows_ncols
 from .utils import pac_yw, auto_corr, plot_autocorr
 from .utils import dict_to_file, dateandtime_now, ts_features
-from .utils import Plot
 
 
 ticker = mpl.ticker
@@ -44,7 +46,7 @@ class EDA(Plot):
 
     Methods
     ---------
-    - heatmap
+    - data_availability
     - box_plot
     - plot_missing
     - plot_histograms
@@ -188,12 +190,53 @@ class EDA(Plot):
 
         return
 
+    def data_availability(
+            self,
+            st=None,
+            en=None,
+            cols=None,
+            figsize: tuple = None,
+            **kwargs
+            )->matplotlib.figure.Figure:
+        """
+        Plots data as heatmap which depicts missing values.
+
+        Arguments
+        ---------
+            st : int, str, optional
+                starting row/index in data to be used for plotting
+            en : int, str, optional
+                end row/index in data to be used for plotting
+            cols : str, list
+                columns to use to draw heatmap
+            figsize : tuple, optional
+                figure size
+            **kwargs :
+                Keyword arguments for easy_mpl.imshow
+        Return
+        ------
+            None
+
+        Example
+        -------
+            >>> from tabulight import wq_data
+            >>> data = wq_data()
+            >>> vis = EDA(data)
+            >>> vis.data_availability()
+        """
+        return self._call_method('_heatmap_df',
+                                 cols=cols,
+                                 st=st,
+                                 en=en,
+                                 figsize=figsize,
+                                 **kwargs)            
+
     def heatmap(self,
                 st=None,
                 en=None,
                 cols=None,
                 figsize: tuple = None,
-                **kwargs):
+                **kwargs)->matplotlib.figure.Figure:
         """
         Plots data as heatmap which depicts missing values.
 
@@ -220,8 +263,7 @@ class EDA(Plot):
             >>> vis = EDA(data)
             >>> vis.heatmap()
         """
-        if sns is None:
-            raise SeabornNotFound()
+        warnings.warn("heatmapt is deprecated, please use data availability plot using data_availability")
 
         return self._call_method('_heatmap_df',
                                  cols=cols,
@@ -239,6 +281,7 @@ class EDA(Plot):
             spine_color: str = "#EEEEEE",
             title=None,
             title_fs=16,
+            ylabel:str = "Examples",
             fname="",
             figsize= None,
             **kwargs
@@ -271,48 +314,53 @@ class EDA(Plot):
         data = _preprocess_df(data, st, en)
 
         _kwargs = {
-            "xtick_labels_fs": 12,
-            "ytick_labels_fs": 20
+            "aspect": "auto",
         }
-        for k in _kwargs.keys():
-            if k in kwargs:
-                _kwargs[k] = kwargs.pop(k)
+        _kwargs.update(kwargs)
 
         show_time_on_yaxis = False
         if isinstance(data.index, pd.DatetimeIndex):
             show_time_on_yaxis = True
 
-        _, axis = plt.subplots(figsize=figsize or (5 + len(cols)*0.25, 10 + len(cols)*0.1))
+        fig, axis = plt.subplots(figsize=figsize or (5 + len(cols)*0.25, 10 + len(cols)*0.1))
         # ax2 - Heatmap
-        sns.heatmap(data[cols].isna(), cbar=False, cmap="binary", ax=axis, **kwargs)
+        cmap = matplotlib.colors.ListedColormap(['white', 'black'])
+        im = imshow(data[cols].isna(), colorbar=False, cmap=cmap, ax=axis, show=False, **_kwargs)
 
-        axis.set_yticks(axis.get_yticks()[0::5].astype('int'))
+        # get 10 ticks from y-axis
+        arr = axis.get_yticks()
+        yticks = np.linspace(arr[0], arr[-1], num=10, dtype=int)
+        axis.set_yticks(yticks)
 
         if show_time_on_yaxis:
             index = pd.date_range(data.index[0], data.index[-1],
                                   periods=len(axis.get_yticks()))
             # formatting y-ticklabels
             index = [d.strftime('%Y-%m-%d') for d in index]
-            axis.set_yticklabels(index, fontsize="18")
+            im.axes.set_yticklabels(index, fontsize="18")
         else:
-            axis.set_yticklabels(axis.get_yticks(),
-                                 fontsize=_kwargs['ytick_labels_fs'])
-        axis.set_xticklabels(
-            axis.get_xticklabels(),
-            horizontalalignment="center",
-            fontweight="light",
-            fontsize=_kwargs['xtick_labels_fs'],
-        )
+            im.axes.set_yticklabels(axis.get_yticks(), fontsize=20)
+        
+        if im.axes.get_xticks().shape[0] < 20:
+            im.axes.set_xticklabels(
+                axis.get_xticklabels(),
+                horizontalalignment="center",
+                fontweight="light",
+                fontsize=12,
+                rotation=90
+            )
+
         axis.tick_params(length=1, colors="#111111")
-        axis.set_ylabel("Examples", fontsize="24")
+        axis.set_ylabel(ylabel, fontsize="24")
         for _, spine in axis.spines.items():
             spine.set_visible(True)
             spine.set_color(spine_color)
+
         if title is not None:
             axis.set_title(title, fontsize=title_fs)
 
         self._save_or_show(fname=fname + '_heat_map', dpi=500)
-        return axis
+        return fig
 
     def plot_missing(self, st=None, en=None, cols=None, **kwargs):
         """
@@ -382,7 +430,7 @@ class EDA(Plot):
 
             # ax1 - Barplot
             ax1 = bar_chart(labels=list(data.columns),
-                            values=np.round(mv_cols_ratio * 100, 2),
+                            data=np.round(mv_cols_ratio * 100, 2),
                             orient='v',
                             show=False,
                             ax=ax1)
@@ -736,7 +784,7 @@ class EDA(Plot):
         _, ax = plt.subplots(figsize=figsize)
 
         bar_chart(labels=data.columns.tolist(),
-                  values=ranks,
+                  data=ranks,
                   orient=orientation,
                   show=False,
                   sort=True,
@@ -769,12 +817,12 @@ class EDA(Plot):
             cols :
                 columns to use
             method : str, optional
-                     {"pearson", "spearman", "kendall", "covariance"}, by default "pearson"
+                     {``pearson``, ``spearman``, ``kendall``, ``covariance``}, by default ``pearson``
             split : str
                 To plot only positive correlations, set it to "pos" or to plot
                 only negative correlations, set it to "neg".
             **kwargs : keyword Args
-                Any additional keyword arguments for seaborn.heatmap
+                Any additional keyword arguments for easy_mpl.imshow
 
         Example
         -------
@@ -792,9 +840,6 @@ class EDA(Plot):
                 cols = self.in_cols + self.out_cols
             if isinstance(cols, dict):
                 cols = None
-
-        if sns is None:
-            raise SeabornNotFound()
 
         return self._call_method("_feature_feature_corr_df",
                                  cols=cols,
@@ -820,7 +865,7 @@ class EDA(Plot):
         Type of split to be performed {None, "pos", "neg", "high", "low"}, by default
             None
         method : str, optional
-                 {"pearson", "spearman", "kendall"}, by default "pearson"
+                 {"pearson", "spearman", "kendall", "covariancce"}, by default "pearson"
 
         kwargs
             * vmax: float, default is calculated from the given correlation \
@@ -860,22 +905,22 @@ class EDA(Plot):
         _, ax = plt.subplots(figsize=figsize)
 
         _kwargs = dict(
-            annot= True if len(cols) <= 20 else False,
+            annotate = True if len(cols) <= 20 else False,
             cmap="BrBG",
             vmax=vmax,
             vmin=vmin,
-            linewidths=0.5,
-            annot_kws={"size": 10},
-            cbar_kws={"shrink": 0.95, "aspect": 30},
-            fmt='.2f',
-            center=0
+            grid_params = dict(linewidth=0.5),
+            annotate_kws={"fontsize": 10, 'fmt': "%.2f", 'ha': 'center', 'va': 'center'},
+            cbar_params={"shrink": 0.95, "aspect": 30},
         )
 
         if kwargs:
             # pass any keyword argument provided by the user to sns.heatmap
             _kwargs.update(kwargs)
 
-        ax = sns.heatmap(corr, ax=ax, **_kwargs)
+        # ax = sns.heatmap(corr, ax=ax, **_kwargs)
+        im = imshow(corr, ax=ax, show=False, **_kwargs)
+        ax = im.axes
         ax.set(frame_on=True)
 
         self._save_or_show(fname=f"{split if split else ''}_feature_corr_{prefix}")
