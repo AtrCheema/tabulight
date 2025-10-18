@@ -78,7 +78,7 @@ class EDA(Plot):
             out_cols=None,
             path=None,
             dpi=300,
-            save=True,
+            save=False,
             show=True,
     ):
         """
@@ -315,6 +315,7 @@ class EDA(Plot):
 
         _kwargs = {
             "aspect": "auto",
+            'interpolation': 'none'
         }
         _kwargs.update(kwargs)
 
@@ -325,8 +326,9 @@ class EDA(Plot):
         fig, axis = plt.subplots(figsize=figsize or (5 + len(cols)*0.25, 10 + len(cols)*0.1))
         # ax2 - Heatmap
         cmap = matplotlib.colors.ListedColormap(['white', 'black'])
-        im = imshow(data[cols].isna(), colorbar=False, cmap=cmap, ax=axis, show=False, **_kwargs)
-
+        # todo : imshow from easy_mpl is extremely slow on large data e.g len of ~23k
+        # im = imshow(data[cols].isna(), colorbar=False, cmap='binary', ax=axis, show=False, **_kwargs)
+        im = axis.imshow(data[cols].isna(),  cmap='binary', **_kwargs)
         # get 10 ticks from y-axis
         arr = axis.get_yticks()
         yticks = np.linspace(arr[0], arr[-1], num=10, dtype=int)
